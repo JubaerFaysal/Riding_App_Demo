@@ -5,7 +5,7 @@ import 'package:riding_app/features/live_stream/controller/live_stream_controlle
 import 'package:riding_app/features/live_stream/controller/live_stream_audience_controller.dart';
 
 class LiveStreamAudienceScreen extends StatelessWidget {
-  const LiveStreamAudienceScreen({Key? key}) : super(key: key);
+  const LiveStreamAudienceScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +130,7 @@ class LiveStreamAudienceScreen extends StatelessWidget {
 
 // Watching Screen
 class LiveStreamWatchingScreen extends StatelessWidget {
-  const LiveStreamWatchingScreen({Key? key}) : super(key: key);
+  const LiveStreamWatchingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

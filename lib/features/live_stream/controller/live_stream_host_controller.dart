@@ -28,14 +28,8 @@ class LiveStreamHostController extends GetxController {
 
   /// Request camera and microphone permissions
   Future<bool> _requestStreamPermissions() async {
-    logger.i('🔐 PERMISSIONS: Requesting camera and microphone...');
-
     final cameraStatus = await Permission.camera.request();
-    logger.i('   📷 Camera permission: $cameraStatus');
-
     final microphoneStatus = await Permission.microphone.request();
-    logger.i('   🎤 Microphone permission: $microphoneStatus');
-
     if (cameraStatus.isDenied || microphoneStatus.isDenied) {
       logger.w('   ⚠️ Permissions DENIED by user');
       Get.snackbar(
@@ -71,17 +65,13 @@ class LiveStreamHostController extends GetxController {
     logger.i('🎬 START BROADCAST: Initializing broadcast flow');
 
     if (channelController.text.isEmpty) {
-      logger.w('   ❌ Channel name is empty');
       Get.snackbar('Error', 'Please enter a channel name');
       return;
     }
 
-    logger.i('   📺 Channel: ${channelController.text}');
     isJoining.value = true;
 
     try {
-      // Step 1: Request permissions
-      logger.i('📍 Step 1: Requesting permissions...');
       final permissionsGranted = await _requestStreamPermissions();
       if (!permissionsGranted) {
         logger.e('   ❌ Permissions not granted, aborting');

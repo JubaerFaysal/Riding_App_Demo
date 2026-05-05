@@ -150,7 +150,6 @@ class AgoraController extends GetxController {
     required int uid,
   }) async {
     _joinCompleter = Completer<void>();
-
     try {
       await agoraEngine.setChannelProfile(
         ChannelProfileType.channelProfileLiveBroadcasting,

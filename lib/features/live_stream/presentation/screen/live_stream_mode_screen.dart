@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:riding_app/features/live_stream/controller/live_stream_controller.dart';
 
 class LiveStreamModeScreen extends StatelessWidget {
-  const LiveStreamModeScreen({Key? key}) : super(key: key);
+  const LiveStreamModeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

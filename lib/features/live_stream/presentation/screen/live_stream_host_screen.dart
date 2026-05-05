@@ -5,14 +5,10 @@ import 'package:riding_app/features/live_stream/controller/live_stream_controlle
 import 'package:riding_app/features/live_stream/controller/live_stream_host_controller.dart';
 
 class LiveStreamHostScreen extends StatelessWidget {
-  const LiveStreamHostScreen({Key? key}) : super(key: key);
+  const LiveStreamHostScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // DO NOT use init: here. LiveStreamHostController uses Get.find<AgoraController>()
-    // internally, which requires AgoraController to already be registered.
-    // We put it lazily here; it will be deleted when this route is popped (that's fine –
-    // it doesn't hold the Agora session, AgoraController does).
     return GetBuilder<LiveStreamHostController>(
       init: LiveStreamHostController(),
       builder: (controller) {
@@ -195,11 +191,10 @@ class LiveStreamHostScreen extends StatelessWidget {
 // ─────────────────────────────────────────────────────────────────────────────
 
 class LiveStreamActiveBroadcastScreen extends StatelessWidget {
-  const LiveStreamActiveBroadcastScreen({Key? key}) : super(key: key);
+  const LiveStreamActiveBroadcastScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // Both controllers are permanent – safe to find from any route.
     final liveStreamController = Get.find<LiveStreamController>();
     final agoraController = Get.find<AgoraController>();
 
