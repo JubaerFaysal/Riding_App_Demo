@@ -352,7 +352,8 @@ class LiveStreamActiveBroadcastScreen extends StatelessWidget {
                         onPressed: () async {
                           await agoraController.leaveChannel();
                           liveStreamController.reset();
-                          Get.offNamed('/live_stream_mode');
+                          //Get.offNamed('/live_stream_mode');
+                          Get.back();
                         },
                         backgroundColor: Colors.red,
                       ),

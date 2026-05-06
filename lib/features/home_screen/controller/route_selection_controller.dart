@@ -10,10 +10,8 @@ class LocationResult {
     required this.address,
   });
 }
-enum SearchField { pickup, drop }
 
 class SelectRouteController extends GetxController {
-
   final FocusNode pickupFocus = FocusNode();
   final FocusNode dropFocus = FocusNode();
 
@@ -30,10 +28,6 @@ class SelectRouteController extends GetxController {
     LocationResult(name: 'Ikeja City Mall', address: 'Ikeja, Lagos'),
     LocationResult(name: 'Muri Okunola Park', address: 'Victoria island, Lagos'),
     LocationResult(name: 'Filmhouse IMAX Cinema', address: 'Lekki, Lagos'),
-    LocationResult(name: 'Filmhouse IMAX Cinema', address: 'Lekki, Lagos'),
-    LocationResult(name: 'Filmhouse IMAX Cinema', address: 'Lekki, Lagos'),
-    LocationResult(name: 'Filmhouse IMAX Cinema', address: 'Lekki, Lagos'),
-    LocationResult(name: 'Filmhouse IMAX Cinema', address: 'Lekki, Lagos'),
     LocationResult(name: 'Adeshina Street, Somewhere Ville', address: 'Ikeja, Lagos'),
     LocationResult(name: 'Adeola Court Estate, Somewhere', address: 'Victoria island, Lagos'),
     LocationResult(name: 'Addide Store, Somewhere', address: 'Lekki, Lagos'),
@@ -41,11 +35,10 @@ class SelectRouteController extends GetxController {
 
   List<LocationResult> searchPickup() {
     if (pickupQuery.value.isEmpty) {
-      return allSuggestions.toList();
+      return allSuggestions;
     }
 
     final q = pickupQuery.value.toLowerCase();
-
     return allSuggestions.where((l) {
       return l.name.toLowerCase().contains(q) ||
           l.address.toLowerCase().contains(q);
@@ -54,11 +47,10 @@ class SelectRouteController extends GetxController {
 
   List<LocationResult> searchDrop() {
     if (dropQuery.value.isEmpty) {
-      return allSuggestions.toList();
+      return allSuggestions;
     }
 
     final q = dropQuery.value.toLowerCase();
-
     return allSuggestions.where((l) {
       return l.name.toLowerCase().contains(q) ||
           l.address.toLowerCase().contains(q);
@@ -76,30 +68,50 @@ class SelectRouteController extends GetxController {
     dropController.addListener(() {
       dropQuery.value = dropController.text;
     });
+
+    // Add focus listeners to reset queries when focusing on a field
+    pickupFocus.addListener(() {
+      if (pickupFocus.hasFocus && selectedPickup.value != null) {
+        // When pickup field gains focus and has a selected value, clear it to show all locations
+        pickupController.clear();
+        pickupQuery.value = '';
+      }
+    });
+
+    dropFocus.addListener(() {
+      if (dropFocus.hasFocus && selectedDrop.value != null) {
+        // When drop field gains focus and has a selected value, clear it to show all locations
+        dropController.clear();
+        dropQuery.value = '';
+      }
+    });
   }
 
   void selectPickup(LocationResult loc) {
     selectedPickup.value = loc;
     pickupController.text = loc.name;
-    pickupQuery.value = loc.name;
+    pickupQuery.value = '';
+    // Optional: Move focus to drop field after selecting pickup
+    // dropFocus.requestFocus();
   }
 
   void selectDrop(LocationResult loc) {
     selectedDrop.value = loc;
     dropController.text = loc.name;
-    dropQuery.value = loc.name;
+    dropQuery.value = '';
   }
 
   void clearPickup() {
     pickupController.clear();
     pickupQuery.value = '';
+    selectedPickup.value = null;
   }
 
   void clearDrop() {
     dropController.clear();
     dropQuery.value = '';
+    selectedDrop.value = null;
   }
-
 
   void goToNextPage() {
     if (selectedPickup.value != null && selectedDrop.value != null) {
@@ -119,6 +131,8 @@ class SelectRouteController extends GetxController {
   void onClose() {
     pickupController.dispose();
     dropController.dispose();
+    pickupFocus.dispose();
+    dropFocus.dispose();
     super.onClose();
   }
 }

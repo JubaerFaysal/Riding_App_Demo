@@ -5,18 +5,17 @@ import 'package:riding_app/core/common/widgets/custom_search_field.dart';
 import '../../controller/route_selection_controller.dart';
 
 class SelectRouteScreen extends StatelessWidget {
-  const SelectRouteScreen({super.key,});
+  const SelectRouteScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<SelectRouteController>();
 
     return Scaffold(
-      backgroundColor: Color(0xFFE8E8E8),
+      backgroundColor: const Color(0xFFE8E8E8),
       body: Column(
         children: [
-          _MapPeek(),
-
+           _MapPeek(),
           Expanded(
             child: Container(
               decoration: const BoxDecoration(
@@ -41,13 +40,11 @@ class SelectRouteScreen extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-
                         // Header
                         Row(
                           children: [
@@ -69,77 +66,71 @@ class SelectRouteScreen extends StatelessWidget {
                             const SizedBox(width: 32),
                           ],
                         ),
-
                         const SizedBox(height: 20),
-
+                        // Remove Obx from here - CustomSearchField doesn't need it
                         CustomSearchField(
                           controller: controller.pickupController,
                           focusNode: controller.pickupFocus,
                           hintText: 'Pickup location?',
                           onClear: controller.clearPickup,
                         ),
-
                         const SizedBox(height: 12),
-
                         CustomSearchField(
                           controller: controller.dropController,
                           focusNode: controller.dropFocus,
                           hintText: 'Drop-off location?',
                           onClear: controller.clearDrop,
                         ),
-
                         const SizedBox(height: 8),
                       ],
                     ),
                   ),
-
+                  // Only wrap the list that actually uses observables
                   Expanded(
                     child: Obx(() {
+                      // These directly use observable values
                       final pickupList = controller.searchPickup();
                       final dropList = controller.searchDrop();
 
-                      return ListView(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        children: [
-                          if (controller.pickupQuery.value.isNotEmpty) ...[
-                            const SizedBox(height: 8),
-                            const Text(
-                              "Pickup suggestions",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 8),
+                      // Determine which list to show based on active field
+                      final isPickupActive = controller.pickupFocus.hasFocus;
+                      final isDropActive = controller.dropFocus.hasFocus;
 
-                            ...pickupList.map((loc) => _LocationTile(
-                              location: loc,
-                              query: controller.pickupQuery.value,
-                              onTap: () => controller.selectPickup(loc),
-                            )),
-                          ],
-
-                          if (controller.dropQuery.value.isNotEmpty) ...[
-                            const SizedBox(height: 16),
-                            const Text(
-                              "Drop-off suggestions",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 8),
-
-                            ...dropList.map((loc) => _LocationTile(
-                              location: loc,
-                              query: controller.dropQuery.value,
-                              onTap: () => controller.selectDrop(loc),
-                            )),
-                          ],
-
-                          ...pickupList.map((loc) => _LocationTile(
-                            location: loc,
-                            query: controller.pickupQuery.value,
-                            onTap: () => controller.selectPickup(loc),
-                          )),
-                        ],
-                      );
+                      // Show suggestions based on which field is active
+                      if (isPickupActive) {
+                        return _buildSuggestionList(
+                          title: controller.pickupQuery.value.isNotEmpty
+                              ? "Pickup suggestions"
+                              : "All locations",
+                          list: pickupList,
+                          query: controller.pickupQuery.value,
+                          onTap: controller.selectPickup,
+                        );
+                      } else if (isDropActive) {
+                        return _buildSuggestionList(
+                          title: controller.dropQuery.value.isNotEmpty
+                              ? "Drop-off suggestions"
+                              : "All locations",
+                          list: dropList,
+                          query: controller.dropQuery.value,
+                          onTap: controller.selectDrop,
+                        );
+                      } else {
+                        return _buildSuggestionList(
+                          title: "All locations",
+                          list: controller.allSuggestions,
+                          query: '',
+                          onTap: (loc) {
+                            Get.snackbar(
+                              'Info',
+                              'Tap on a search field first',
+                              snackPosition: SnackPosition.BOTTOM,
+                            );
+                          },
+                        );
+                      }
                     }),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -148,8 +139,31 @@ class SelectRouteScreen extends StatelessWidget {
       ),
     );
   }
-}
 
+  Widget _buildSuggestionList({
+    required String title,
+    required List<LocationResult> list,
+    required String query,
+    required Function(LocationResult) onTap,
+  }) {
+    return ListView(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      children: [
+        const SizedBox(height: 8),
+        Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        ...list.map((loc) => _LocationTile(
+          location: loc,
+          query: query,
+          onTap: () => onTap(loc),
+        )),
+      ],
+    );
+  }
+}
 
 class _MapPeek extends StatelessWidget {
   @override

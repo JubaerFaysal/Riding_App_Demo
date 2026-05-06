@@ -97,7 +97,7 @@ class LiveStreamHostController extends GetxController {
 
       // Step 4: Navigate to broadcast screen
       logger.i('📍 Step 4: Navigating to active broadcast screen...');
-      Get.off(() => const LiveStreamActiveBroadcastScreen());
+      Get.to(() => const LiveStreamActiveBroadcastScreen());
       logger.i('✅ BROADCAST STARTED - Navigation complete');
       logger.i('═══════════════════════════════════════════════════════════');
     } catch (e) {
